@@ -12,7 +12,7 @@ class routing {
     public function validate(array $endpoints){
 
         if(!is_array($endpoints)){
-            is_callable()
+
         }
 
     }
