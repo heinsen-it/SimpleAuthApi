@@ -4,6 +4,36 @@ class jwt{
 
 
 
+    /**
+     * Signiert die Daten mit dem angegebenen Algorithmus
+     *
+     * @param string $input Daten zum Signieren
+     * @param string $key Schlüssel für die Signierung
+     * @param string $algorithm Algorithmus
+     * @return string Die erzeugte Signatur
+     * @throws Exception Bei Fehler in der Signierung
+     */
+    private static function sign(string $input, string $key, string $algorithm): string {
+        list($function, $algo) = self::$supportedAlgorithms[$algorithm];
+
+        switch ($function) {
+            case 'hash_hmac':
+                return hash_hmac($algo, $input, $key, true);
+
+            case 'openssl':
+                $signature = '';
+                $success = openssl_sign($input, $signature, $key, $algo);
+                if (!$success) {
+                    throw new Exception('OpenSSL konnte nicht signieren: ' . openssl_error_string());
+                }
+                return $signature;
+
+            default:
+                throw new Exception('Nicht unterstützte Signierungsfunktion');
+        }
+    }
+
+
 
     /**
      * Verifiziert die Signatur eines JWT
